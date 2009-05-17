@@ -1,3 +1,5 @@
+# Requires Ruby/GSL (http://rb-gsl.rubyforge.org/).
+# NOTE: this is *not* ruby-gsl (http://ruby-gsl.sourceforge.net/).
 require 'gsl'
 
 class GSL::Matrix

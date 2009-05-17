@@ -36,6 +36,11 @@ module GSL::Linalg
   #   uuN * diag(sN) * vvN' == [M cc]
   # 
   def self.svd_add_column(uu,vv,s,cc)
+    # convert column vectors to matrices
+    if cc.is_a?(GSL::Vector::Col)
+      cc = cc.to_m(cc.size, 1)
+    end
+
     c = cc.size2 # number of added columns
     r = s.size
     q = vv.size1 

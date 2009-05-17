@@ -35,7 +35,7 @@ module GSL::Linalg
   # cc are the new column(s) to be appended. Returns new SVD (uuN,sN,vvN) s.t.
   #   uuN * diag(sN) * vvN' == [M cc]
   # 
-  def self.svd_add_column(uu,s,vv,cc)
+  def self.svd_add_column(uu,vv,s,cc)
     c = cc.size2 # number of added columns
     r = s.size
     q = vv.size1 
@@ -73,8 +73,8 @@ module GSL::Linalg
     r = [uu.size1, vv.size2].min
     
     [uu.submatrix(0, 0, uu.size1, r),
-      s.subvector(r),
-      vv.submatrix(0, 0, vv.size1, r)]
+      vv.submatrix(0, 0, vv.size1, r),
+      s.subvector(r)]
   end
 
 end

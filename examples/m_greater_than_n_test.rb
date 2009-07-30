@@ -9,17 +9,30 @@ m = GSL::Matrix[[1, 2],
                 [10, 11],
                 [13, 14]]
 
-col = GSL::Vector::Col[3, 6, 9, 12, 15]
+#col = GSL::Vector::Col[3, 6, 9, 12, 15]
+cols = GSL::Matrix[[3, 1],
+                   [6, 2],
+                   [9, 3],
+                   [12, 4],
+                   [15, 5]]
 
 # Compute the SVD of the original matrix m
-m_u, m_v, m_s = m.SV_decomp
+u, v, s = m.SV_decomp
 
-# Add the column to the SVD; we don't need m anymore.
-u, v, s = GSL::Linalg.svd_add_column(m_u, m_v, m_s, col)
+rank = 3
 
-# The SVD, when re-composed, should now recreate [m, col].
-m2 = u * s.to_m_diagonal * v.transpose
-puts m2.inspect
+5.times do
+  # Add the column to the SVD
+  u, v, s = GSL::Linalg.svd_add_column(u, v, s, cols.column(0))
+
+  u = u.submatrix(0, 0, u.size1, rank) if u.size2 > rank
+  v = v.submatrix(0, 0, v.size1, rank) if v.size2 > rank
+  s = s.subvector(0, rank) if s.size > rank
+
+  # The SVD, when re-composed, should now recreate [m, col].
+  m2 = u * s.to_m_diagonal * v.transpose
+  puts m2.inspect
+end
 
 # GSL::Matrix
 # [  1.000e+00  2.000e+00  3.000e+00 

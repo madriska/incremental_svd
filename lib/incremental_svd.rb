@@ -56,7 +56,10 @@ module GSL::Linalg
   def self.svd_add_column(uu,vv,s,cc)
     # convert column vectors to matrices
     if cc.is_a?(GSL::Vector::Col)
-      cc = cc.to_m(cc.size, 1)
+      # without the clone, if we're passed a Vector::Col::View of a matrix, 
+      # for some reason to_m takes values from *outside* the view 
+      # (the original matrix)
+      cc = cc.clone.to_m(cc.size, 1)
     end
 
     c = cc.size2 # number of added columns

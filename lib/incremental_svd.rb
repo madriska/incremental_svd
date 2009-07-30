@@ -11,8 +11,6 @@ class GSL::Matrix
     if m <= n
       return qr.unpack(tau)
     else # Manually unpack only what we need; m may be >> n
-      autoq, autor = qr.unpack(tau)
-      
       q = GSL::Matrix.eye(m, n)
       ([m,n].min-1).downto(0) do |i|
         c = qr.column(i)

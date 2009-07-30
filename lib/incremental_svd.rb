@@ -6,11 +6,31 @@ class GSL::Matrix
   # Emulates MATLAB's qr(A,0)
   def economy_QR_decomp
     qr, tau = self.QR_decomp
-    q, r = qr.unpack(tau)
     
     m, n = shape
-    return [q, r] if m <= n
-    [q.submatrix(0, 0, q.size1, n), r.submatrix(0, 0, n, n)]
+    if m <= n
+      return qr.unpack(tau)
+    else # Manually unpack only what we need; m may be >> n
+      autoq, autor = qr.unpack(tau)
+      
+      q = GSL::Matrix.eye(m, n)
+      ([m,n].min-1).downto(0) do |i|
+        c = qr.column(i)
+        h = c.subvector(i, m-i)
+        mat = q.submatrix(i, i, m-i, n-i)
+        GSL::Linalg::Householder.hm(tau[i], h, mat)
+      end
+
+      # TODO: is there a GSL method for taking the upper triangular?
+      r = GSL::Matrix.zeros(n, n)
+      (0...m).each do |i|
+        (i...n).each do |j|
+          r[i,j] = qr[i,j]
+        end
+      end
+
+      return [q, r]
+    end
   end
 
   # Emulates MATLAB's svd(A,0)
